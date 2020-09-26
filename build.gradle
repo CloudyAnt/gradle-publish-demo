@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'cn.itscloudy'
+version '1.3'
+
+repositories {
+}
+
+dependencies {
+}
+
+publishing {
+    def base = "http://localhost:8081/repository"
+    repositories {
+        maven {
+            def releaseRepo = "$base/maven-releases"
+            def snapshotsRepo = "$base/maven-snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepo : releaseRepo
+            credentials {
+                username = "admin"
+                password = "pass"
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+task install {
+    dependsOn publishToMavenLocal
+}
+
+task deploy {
+    dependsOn publish
+}
